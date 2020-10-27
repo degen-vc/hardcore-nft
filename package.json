@@ -1,0 +1,33 @@
+{
+  "name": "hardcore_nft",
+  "version": "0.0.1",
+  "description": "hardcore_nft",
+  "main": "index.js",
+  "scripts": {
+    "compile": "truffle compile",
+    "test": "truffle test",
+    "ganache": "ganache-cli --gasLimit 100000000"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+    "ethereum",
+    "nft",
+    "game"
+  ],
+  "author": "Yaroslav Tumanov",
+  "license": "MIT",
+  "bugs": {
+    "url": ""
+  },
+  "homepage": "",
+  "devDependencies": {
+    "@openzeppelin/contracts": "^3.2.0",
+    "bluebird": "^3.7.2",
+    "ganache-cli": "6.10.1",
+    "truffle": "5.1.41",
+    "truffle-assertions": "0.9.2"
+  }
+}
