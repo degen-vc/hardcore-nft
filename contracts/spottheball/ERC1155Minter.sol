@@ -18,7 +18,6 @@ import "../ProxyRegistry.sol";
 contract ERC1155Minter is ERC1155, ERC1155MintBurn, ERC1155Metadata, Ownable, MinterRole, WhitelistAdminRole {
     using Strings for string;
 
-    uint256 private _currentTokenID = 0;
     mapping(uint256 => address) public creators;
     mapping(uint256 => uint256) public tokenSupply;
     mapping(uint256 => uint256) public tokenMaxSupply;
@@ -83,7 +82,8 @@ contract ERC1155Minter is ERC1155, ERC1155MintBurn, ERC1155Metadata, Ownable, Mi
         uint256 _initialSupply,
         uint256 _id,
         bytes calldata _data
-    ) external onlyMinter returns (uint256 tokenId) {
+    ) external onlyMinter returns (uint256) {
+        require(!_exists(_id), "Id already used");
         require(_initialSupply <= _maxSupply, "Initial supply cannot be more than max supply");
         creators[_id] = _creator;
 

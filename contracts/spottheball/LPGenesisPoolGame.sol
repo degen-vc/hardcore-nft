@@ -82,13 +82,13 @@ contract LPGenesisPoolGame is LPTokenWrapper, Ownable {
 
         points[msg.sender] = points[msg.sender].sub(rewardNeeded);
         uint256 _id = _generateId(_xPoint, _yPoint, width);
-        gameMinter.create(msg.sender, 1, 1, _id, "");
+        gameMinter.create(msg.sender, 1, 1, _id, "0x");
         emit Created(msg.sender, _id);
     }
 
     function _generateId(uint256 _xPoint, uint256 _yPoint, uint256 _width) internal view returns(uint256) {
         uint256 id = _width * _yPoint + _xPoint;
-        require(gameMinter.creators(id) == address(0), "Id already taken");
+        require(gameMinter.creators(id) == address(0), "Id already used");
         return id;
     }
 }
