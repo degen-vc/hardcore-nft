@@ -19,7 +19,7 @@ contract LPGenesisPoolGame is LPTokenWrapper, Ownable {
     event GameStarted(uint256 gameStartTime, uint256 rewardNeeded);
     event Staked(address indexed user, uint256 amount);
     event Withdrawn(address indexed user, uint256 amount);
-    event Created(address indexed user, uint256 indexed id);
+    event Created(address indexed user, uint256 indexed id, uint256 x, uint256 y);
 
     modifier updateReward(address account) {
         if (account != address(0)) {
@@ -83,7 +83,7 @@ contract LPGenesisPoolGame is LPTokenWrapper, Ownable {
         points[msg.sender] = points[msg.sender].sub(rewardNeeded);
         uint256 _id = _generateId(_xPoint, _yPoint, width);
         gameMinter.create(msg.sender, 1, 1, _id, "0x");
-        emit Created(msg.sender, _id);
+        emit Created(msg.sender, _id, _xPoint, _yPoint);
     }
 
     function _generateId(uint256 _xPoint, uint256 _yPoint, uint256 _width) internal view returns(uint256) {
