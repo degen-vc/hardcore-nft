@@ -44,14 +44,14 @@ contract LPGenesisPoolGame is LPTokenWrapper, Ownable {
         emit GameStarted(_gameStartTime, _amount);
     }
 
-    //User receives 1 point (1e18) per day
     function earned(address account) public view returns (uint256) {
         uint256 blockTime = block.timestamp;
         return
             points[account].add(
-                blockTime.sub(lastUpdateTime[account]).mul(1e18).div(86400).mul(
+                (blockTime.sub(lastUpdateTime[account]).mul(1e18).div(86400).mul(
                     (balanceOf(account)).div(1e18)
-                )
+                //1 point equals 2.02 LP tokens per day
+                )).div(2)
             );
     }
 
