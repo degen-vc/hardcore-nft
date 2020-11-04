@@ -429,5 +429,45 @@ contract('GameMinter', function(accounts) {
       res = await lpGenesisPool.earned.call(user, {from: user});
       assertBNequal(res, halfPoint);
     });
+  
+    it('should be possible to get participants ids', async () => {
+
+      const startTime = currentTime + 1;
+
+      await ganache.setTime(currentTime);
+
+      await lpGenesisPool.start(startTime, onePoint, width, imageUrl);
+
+      const stakeTime = currentTime + 1;
+      await ganache.setTime(stakeTime);
+
+      await lpGenesisPool.stake(stakeMaxAmount, {from: user});
+
+      const stakeTimeAfterTwoDays = stakeTime + ONE_DAY * 2;
+      await ganache.setTime(stakeTimeAfterTwoDays);
+
+      let res = await lpGenesisPool.earned.call(user, {from: user});
+      const twoPoints = bn(onePoint).mul(bn(2));
+      assertBNequal(res, twoPoints);
+
+      const xOne = 123;
+      const yOne = 456;
+      const idOne = yOne * width + xOne;
+
+      assert.equal((await gameMinter.getIds()).length, 0);
+
+      await lpGenesisPool.redeem(xOne, yOne, {from: user});
+
+      const xTwo = 546;
+      const yTwo = 888;
+      const idTwo = yTwo * width + xTwo;
+
+      await lpGenesisPool.redeem(xTwo, yTwo, {from: user});
+
+      const ids = await gameMinter.getIds();
+      assert.equal(ids[0], idOne);
+      assert.equal(ids[1], idTwo);
+    });
+
   });
 });

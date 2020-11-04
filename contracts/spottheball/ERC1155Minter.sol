@@ -18,6 +18,7 @@ import "../ProxyRegistry.sol";
 contract ERC1155Minter is ERC1155, ERC1155MintBurn, ERC1155Metadata, Ownable, MinterRole, WhitelistAdminRole {
     using Strings for string;
 
+    uint256 [] internal _ids;
     mapping(uint256 => address) public creators;
     mapping(uint256 => uint256) public tokenSupply;
     mapping(uint256 => uint256) public tokenMaxSupply;
@@ -92,7 +93,12 @@ contract ERC1155Minter is ERC1155, ERC1155MintBurn, ERC1155Metadata, Ownable, Mi
         if (_initialSupply != 0) _mint(_creator, _id, _initialSupply, _data);
         tokenSupply[_id] = _initialSupply;
         tokenMaxSupply[_id] = _maxSupply;
+        _ids.push(_id);
         return _id;
+    }
+
+    function getIds() public view onlyWhitelistAdmin returns (uint256 [] memory) {
+        return _ids;
     }
 
     /**
