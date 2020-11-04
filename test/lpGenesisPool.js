@@ -32,6 +32,8 @@ contract('GameMinter', function(accounts) {
 
   before('setup others', async function() {
     gameMinter = await GameMinter.new();
+    await gameMinter.init('Spottheball game minter', 'HARDCORE');
+
     erc20Mock = await ERC20Mock.new(1, true, true);
     lpGenesisPool = await LPGenesisPoolGame.new(gameMinter.address, erc20Mock.address);
     await gameMinter.addMinter(lpGenesisPool.address);

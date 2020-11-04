@@ -11,10 +11,6 @@ contract MinterRole is Context {
 
     Roles.Role private _minters;
 
-    constructor () internal {
-        _addMinter(_msgSender());
-    }
-
     modifier onlyMinter() {
         require(isMinter(_msgSender()), "MinterRole: caller does not have the Minter role");
         _;

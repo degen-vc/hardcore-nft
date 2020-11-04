@@ -19,6 +19,7 @@ contract('GameMinter', function(accounts) {
 
   before('setup others', async function() {
     gameMinter = await GameMinter.new();
+    await gameMinter.init('Spottheball game minter', 'HARDCORE');
     await ganache.snapshot();
   });
 

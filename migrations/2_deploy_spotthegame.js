@@ -23,6 +23,9 @@ module.exports = async function (deployer, network) {
   const gameMinter = await GameMinter.deployed();
   await wait(`Game minter contract mined ${gameMinter.address}`);
 
+  await gameMinter.init("Spottheball game minter", "HARDCORE");
+  await wait('minter contract inited');
+
   await deployer.deploy(LPGenesisPoolGame, gameMinter.address, lpERC20Address);
   const lpGenesisPool = await LPGenesisPoolGame.deployed();
   await wait(`LP genesis pool contract contract mined ${lpGenesisPool.address}`);

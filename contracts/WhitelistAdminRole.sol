@@ -15,10 +15,6 @@ contract WhitelistAdminRole is Context {
 
     Roles.Role private _whitelistAdmins;
 
-    constructor () internal {
-        _addWhitelistAdmin(_msgSender());
-    }
-
     modifier onlyWhitelistAdmin() {
         require(isWhitelistAdmin(_msgSender()), "WhitelistAdminRole: caller does not have the WhitelistAdmin role");
         _;

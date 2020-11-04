@@ -26,12 +26,14 @@ contract ERC1155Minter is ERC1155, ERC1155MintBurn, ERC1155Metadata, Ownable, Mi
     // Contract symbol
     string public symbol;
 
-    constructor(
-        string memory _name,
-        string memory _symbol
-    ) public {
+    function init(string memory _name, string memory _symbol) public onlyOwner {
+        require((bytes(name)).length == 0, 'Already initiated');
+
         name = _name;
         symbol = _symbol;
+        _addMinter(_msgSender());
+        _addWhitelistAdmin(_msgSender());
+        _setBaseMetadataURI("https://lambo.hcore.finance/spot-the-ball-win/#home");
     }
 
     function removeWhitelistAdmin(address account) public onlyOwner {
