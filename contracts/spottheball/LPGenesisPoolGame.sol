@@ -58,7 +58,6 @@ contract LPGenesisPoolGame is LPTokenWrapper, Ownable {
     // stake visibility is public as overriding LPTokenWrapper's stake() function
     function stake(uint256 amount) public updateReward(msg.sender) {
         require(gameStartTime != 0,  "Not started yet");
-        //check UNI-V2 LP base unit 18?
         require(amount.add(balanceOf(msg.sender)) <= 2020000000000000000, "Cannot stake more than 2.02 UNI-V2 LP");
 
         super.stake(amount);
