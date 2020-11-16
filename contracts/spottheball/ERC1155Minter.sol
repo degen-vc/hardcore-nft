@@ -97,7 +97,7 @@ contract ERC1155Minter is ERC1155, ERC1155MintBurn, ERC1155Metadata, Ownable, Mi
         return _id;
     }
 
-    function getIds() public view onlyWhitelistAdmin returns (uint256 [] memory) {
+    function getIds() public view returns (uint256 [] memory) {
         return _ids;
     }
 
