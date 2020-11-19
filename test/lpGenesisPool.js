@@ -45,6 +45,7 @@ contract('GameMinter', function(accounts) {
       assert.equal(await lpGenesisPool.owner(), owner);
       assert.equal(await lpGenesisPool.gameMinter(), gameMinter.address);
       assert.equal(await lpGenesisPool.token(), erc20Mock.address);
+      assertBNequal(await lpGenesisPool.MAX_STAKE(), stakeMaxAmount);
     });
   });
 

@@ -7,6 +7,7 @@ import "../LPTokenWrapper.sol";
 
 
 contract LPGenesisPoolGame is LPTokenWrapper, Ownable {
+    uint256 public constant MAX_STAKE = 2020000000000000000;
     ERC1155Minter public gameMinter;
 
     uint256 public gameStartTime;
@@ -58,7 +59,7 @@ contract LPGenesisPoolGame is LPTokenWrapper, Ownable {
     // stake visibility is public as overriding LPTokenWrapper's stake() function
     function stake(uint256 amount) public updateReward(msg.sender) {
         require(gameStartTime != 0,  "Not started yet");
-        require(amount.add(balanceOf(msg.sender)) <= 2020000000000000000, "Cannot stake more than 2.02 UNI-V2 LP");
+        require(amount.add(balanceOf(msg.sender)) <= MAX_STAKE, "Cannot stake more than 2.02 UNI-V2 LP");
 
         super.stake(amount);
         emit Staked(msg.sender, amount);
