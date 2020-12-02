@@ -1,4 +1,5 @@
 pragma solidity 0.5.12;
+pragma experimental ABIEncoderV2;
 
 import "../Ownable.sol";
 import "./ERC1155Minter.sol";
