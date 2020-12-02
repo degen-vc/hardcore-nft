@@ -25,6 +25,7 @@ contract('GameMinter', function(accounts) {
   const imageUrl = 'www.image.com';
 
   const stakeMaxAmount = '2020000000000000000';
+  const stakeHalfAmount = '1010000000000000000';
 
   let gameMinter;
   let erc20Mock;
@@ -223,6 +224,28 @@ contract('GameMinter', function(accounts) {
 
       const res = await lpGenesisPool.earned.call(user, {from: user})
       assertBNequal(res, onePoint);
+    });
+
+    it('should return 0.5 * 1e18 point after holding 1.01 LP tokens on genesis pool contract (earned)', async () => {
+      const startTime = currentTime + 1;
+
+      await ganache.setTime(currentTime);
+
+      await lpGenesisPool.start(startTime, onePoint, width, imageUrl);
+
+      const stakeTime = currentTime + 1;
+      await ganache.setTime(stakeTime);
+
+      await lpGenesisPool.stake(stakeHalfAmount, {from: user});
+
+      assertBNequal(await lpGenesisPool.earned.call(user, {from: user}), 0);
+
+      const stakeTimeAfterOneDay = stakeTime + ONE_DAY;
+      await ganache.setTime(stakeTimeAfterOneDay);
+
+      const res = await lpGenesisPool.earned.call(user, {from: user});
+      const halfPoint = '500000000000000000';
+      assertBNequal(res, halfPoint);
     });
 
     it('should withdraw 50% with removing LP tokens from contract and updating earned points (withdraw)', async () => {
@@ -455,7 +478,7 @@ contract('GameMinter', function(accounts) {
       const yOne = 456;
       const idOne = yOne * width + xOne;
 
-      assert.equal((await gameMinter.getIds()).length, 0);
+      assert.equal((await gameMinter.getParticipators()).length, 0);
 
       await lpGenesisPool.redeem(xOne, yOne, {from: user});
 
@@ -465,9 +488,14 @@ contract('GameMinter', function(accounts) {
 
       await lpGenesisPool.redeem(xTwo, yTwo, {from: user});
 
-      const ids = await gameMinter.getIds();
-      assert.equal(ids[0], idOne);
-      assert.equal(ids[1], idTwo);
+      assert.equal((await gameMinter.getParticipators()).length, 2);
+      const participators = await gameMinter.getParticipators();
+      assert.equal(participators[0].id, idOne);
+      assert.equal(participators[0].x, xOne);
+      assert.equal(participators[0].y, yOne);
+      assert.equal(participators[1].id, idTwo);
+      assert.equal(participators[1].x, xTwo);
+      assert.equal(participators[1].y, yTwo);
     });
 
   });
