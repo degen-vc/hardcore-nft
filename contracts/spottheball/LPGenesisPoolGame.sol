@@ -1,4 +1,5 @@
 pragma solidity 0.5.12;
+pragma experimental ABIEncoderV2;
 
 import "../Ownable.sol";
 import "./ERC1155Minter.sol";
@@ -50,9 +51,9 @@ contract LPGenesisPoolGame is LPTokenWrapper, Ownable {
         return
             points[account].add(
                 (blockTime.sub(lastUpdateTime[account]).mul(1e18).div(86400).mul(
-                    (balanceOf(account)).div(1e18)
+                    (balanceOf(account).mul(10000)).div(1e18)
                 //1 point equals 2.02 LP tokens per day
-                )).div(2)
+                )).div(20200)
             );
     }
 
@@ -82,7 +83,7 @@ contract LPGenesisPoolGame is LPTokenWrapper, Ownable {
 
         points[msg.sender] = points[msg.sender].sub(rewardNeeded);
         uint256 _id = _generateId(_xPoint, _yPoint, width);
-        gameMinter.create(msg.sender, 1, 1, _id, "0x");
+        gameMinter.create(msg.sender, 1, 1, _id, uint64(_xPoint), uint64(_yPoint), "0x");
         emit Created(msg.sender, _id, _xPoint, _yPoint);
     }
 

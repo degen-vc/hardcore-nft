@@ -1,4 +1,5 @@
 pragma solidity 0.5.12;
+pragma experimental ABIEncoderV2;
 
 import "../Ownable.sol";
 import "../MinterRole.sol";
@@ -18,7 +19,13 @@ import "../ProxyRegistry.sol";
 contract ERC1155Minter is ERC1155, ERC1155MintBurn, ERC1155Metadata, Ownable, MinterRole, WhitelistAdminRole {
     using Strings for string;
 
-    uint256 [] internal _ids;
+    struct Participant {
+        uint128 id;
+        uint64 x;
+        uint64 y;
+    }
+
+    Participant [] internal _participants;
     mapping(uint256 => address) public creators;
     mapping(uint256 => uint256) public tokenSupply;
     mapping(uint256 => uint256) public tokenMaxSupply;
@@ -84,6 +91,8 @@ contract ERC1155Minter is ERC1155, ERC1155MintBurn, ERC1155Metadata, Ownable, Mi
         uint256 _maxSupply,
         uint256 _initialSupply,
         uint256 _id,
+        uint64 _x,
+        uint64 _y,
         bytes calldata _data
     ) external onlyMinter returns (uint256) {
         require(!_exists(_id), "Id already used");
@@ -93,12 +102,12 @@ contract ERC1155Minter is ERC1155, ERC1155MintBurn, ERC1155Metadata, Ownable, Mi
         if (_initialSupply != 0) _mint(_creator, _id, _initialSupply, _data);
         tokenSupply[_id] = _initialSupply;
         tokenMaxSupply[_id] = _maxSupply;
-        _ids.push(_id);
+        _participants.push(Participant(uint128(_id), _x, _y));
         return _id;
     }
 
-    function getIds() public view returns (uint256 [] memory) {
-        return _ids;
+    function getParticipants() public view returns (Participant [] memory) {
+        return _participants;
     }
 
     /**

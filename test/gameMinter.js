@@ -165,7 +165,7 @@ contract('GameMinter', function(accounts) {
       assert.equal(await gameMinter.maxSupply(tokenId), 0);
       assert.equal(await gameMinter.balanceOf(creator, tokenId), 0);
 
-      const result = await gameMinter.create(creator, maxSupply, initialSupply, tokenId, '0x');
+      const result = await gameMinter.create(creator, maxSupply, initialSupply, tokenId, 1, 2, '0x');
 
       assert.equal(result.logs.length, 1);
       assert.equal(result.logs[0].event, 'TransferSingle');
@@ -195,7 +195,7 @@ contract('GameMinter', function(accounts) {
       assert.equal(await gameMinter.balanceOf(creator, tokenId), 0);
 
       await truffleAssert.reverts(
-        gameMinter.create(creator, maxSupply, initialSupply, tokenId, '0x', {from: notMinter}),
+        gameMinter.create(creator, maxSupply, initialSupply, tokenId, 1, 2, '0x', {from: notMinter}),
         'MinterRole: caller does not have the Minter role',
       );
 
@@ -217,7 +217,7 @@ contract('GameMinter', function(accounts) {
       assert.equal(await gameMinter.balanceOf(creator, tokenId), 0);
 
       await truffleAssert.reverts(
-        gameMinter.create(creator, maxSupply, initialSupply, tokenId, '0x'),
+        gameMinter.create(creator, maxSupply, initialSupply, tokenId, 1, 2, '0x'),
         'Initial supply cannot be more than max supply',
       );
 
@@ -238,10 +238,10 @@ contract('GameMinter', function(accounts) {
       assert.equal(await gameMinter.maxSupply(tokenId), 0);
       assert.equal(await gameMinter.balanceOf(creator, tokenId), 0);
 
-      await gameMinter.create(creator, maxSupply, initialSupply, tokenId, '0x');
+      await gameMinter.create(creator, maxSupply, initialSupply, tokenId, 1, 2, '0x');
 
       await truffleAssert.reverts(
-        gameMinter.create(creator, maxSupply, initialSupply, tokenId, '0x'),
+        gameMinter.create(creator, maxSupply, initialSupply, tokenId, 3, 4, '0x'),
         'Id already used',
       );
 
