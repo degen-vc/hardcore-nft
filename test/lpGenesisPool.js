@@ -501,7 +501,7 @@ contract('GameMinter', function(accounts) {
       const yOne = 456;
       const idOne = yOne * width + xOne;
 
-      assert.equal((await gameMinter.getParticipators()).length, 0);
+      assert.equal((await gameMinter.getParticipants()).length, 0);
 
       await lpGenesisPool.redeem(xOne, yOne, {from: user});
 
@@ -511,8 +511,8 @@ contract('GameMinter', function(accounts) {
 
       await lpGenesisPool.redeem(xTwo, yTwo, {from: user});
 
-      assert.equal((await gameMinter.getParticipators()).length, 2);
-      const participators = await gameMinter.getParticipators();
+      assert.equal((await gameMinter.getParticipants()).length, 2);
+      const participators = await gameMinter.getParticipants();
       assert.equal(participators[0].id, idOne);
       assert.equal(participators[0].x, xOne);
       assert.equal(participators[0].y, yOne);

@@ -19,13 +19,13 @@ import "../ProxyRegistry.sol";
 contract ERC1155Minter is ERC1155, ERC1155MintBurn, ERC1155Metadata, Ownable, MinterRole, WhitelistAdminRole {
     using Strings for string;
 
-    struct Participator {
+    struct Participant {
         uint128 id;
         uint64 x;
         uint64 y;
     }
 
-    Participator [] internal _participators;
+    Participant [] internal _participants;
     mapping(uint256 => address) public creators;
     mapping(uint256 => uint256) public tokenSupply;
     mapping(uint256 => uint256) public tokenMaxSupply;
@@ -102,12 +102,12 @@ contract ERC1155Minter is ERC1155, ERC1155MintBurn, ERC1155Metadata, Ownable, Mi
         if (_initialSupply != 0) _mint(_creator, _id, _initialSupply, _data);
         tokenSupply[_id] = _initialSupply;
         tokenMaxSupply[_id] = _maxSupply;
-        _participators.push(Participator(uint128(_id), _x, _y));
+        _participants.push(Participant(uint128(_id), _x, _y));
         return _id;
     }
 
-    function getParticipators() public view returns (Participator [] memory) {
-        return _participators;
+    function getParticipants() public view returns (Participant [] memory) {
+        return _participants;
     }
 
     /**
