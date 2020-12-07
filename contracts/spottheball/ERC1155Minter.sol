@@ -20,9 +20,10 @@ contract ERC1155Minter is ERC1155, ERC1155MintBurn, ERC1155Metadata, Ownable, Mi
     using Strings for string;
 
     struct Participant {
-        uint128 id;
+        uint128 nftId;
         uint64 x;
         uint64 y;
+        address participant;
     }
 
     Participant [] internal _participants;
@@ -102,12 +103,17 @@ contract ERC1155Minter is ERC1155, ERC1155MintBurn, ERC1155Metadata, Ownable, Mi
         if (_initialSupply != 0) _mint(_creator, _id, _initialSupply, _data);
         tokenSupply[_id] = _initialSupply;
         tokenMaxSupply[_id] = _maxSupply;
-        _participants.push(Participant(uint128(_id), _x, _y));
+        _participants.push(Participant(uint128(_id), _x, _y, _creator));
         return _id;
     }
 
-    function getParticipants() public view returns (Participant [] memory) {
-        return _participants;
+    function getParticipantsCount() public view returns (uint) {
+        return _participants.length;
+    }
+
+    function getParticipantById(uint _id) public view returns (uint128, uint64, uint64, address) {
+        Participant storage participant = _participants[_id];
+        return (participant.nftId, participant.x, participant.y, participant.participant);
     }
 
     /**

@@ -501,7 +501,7 @@ contract('GameMinter', function(accounts) {
       const yOne = 456;
       const idOne = yOne * width + xOne;
 
-      assert.equal((await gameMinter.getParticipants()).length, 0);
+      assert.equal(await gameMinter.getParticipantsCount(), 0);
 
       await lpGenesisPool.redeem(xOne, yOne, {from: user});
 
@@ -511,15 +511,58 @@ contract('GameMinter', function(accounts) {
 
       await lpGenesisPool.redeem(xTwo, yTwo, {from: user});
 
-      assert.equal((await gameMinter.getParticipants()).length, 2);
-      const participators = await gameMinter.getParticipants();
-      assert.equal(participators[0].id, idOne);
-      assert.equal(participators[0].x, xOne);
-      assert.equal(participators[0].y, yOne);
-      assert.equal(participators[1].id, idTwo);
-      assert.equal(participators[1].x, xTwo);
-      assert.equal(participators[1].y, yTwo);
+      assert.equal(await gameMinter.getParticipantsCount(), 2);
+      const participantOne = await gameMinter.getParticipantById(0);
+      assert.equal(participantOne[0], idOne);
+      assert.equal(participantOne[1], xOne);
+      assert.equal(participantOne[2], yOne);
+      assert.equal(participantOne[3], user);
+
+      const participantTwo = await gameMinter.getParticipantById(1);
+      assert.equal(participantTwo[0], idTwo);
+      assert.equal(participantTwo[1], xTwo);
+      assert.equal(participantTwo[2], yTwo);
+      assert.equal(participantTwo[3], user);
     });
 
+    it('should be possible to get participants ids in a loop', async () => {
+
+      const startTime = currentTime + 1;
+
+      await ganache.setTime(currentTime);
+
+      await lpGenesisPool.start(startTime, onePoint, width, imageUrl);
+
+      const stakeTime = currentTime + 1;
+      await ganache.setTime(stakeTime);
+
+      await lpGenesisPool.stake(stakeMaxAmount, {from: user});
+
+      const stakeTimeAfterTwoDays = stakeTime + ONE_DAY * 2;
+      await ganache.setTime(stakeTimeAfterTwoDays);
+
+      let res = await lpGenesisPool.earned.call(user, {from: user});
+      const twoPoints = bn(onePoint).mul(bn(2));
+      assertBNequal(res, twoPoints);
+
+      const xOne = 123;
+      const yOne = 456;
+
+      assert.equal(await gameMinter.getParticipantsCount(), 0);
+
+      await lpGenesisPool.redeem(xOne, yOne, {from: user});
+
+      const xTwo = 546;
+      const yTwo = 888;
+
+      await lpGenesisPool.redeem(xTwo, yTwo, {from: user});
+
+      const participantsCount = await gameMinter.getParticipantsCount();
+
+      for (let i = 0; i < participantsCount; i++) {
+        const participant = await gameMinter.getParticipantById(i);
+        console.log(`nft id: ${participant[0]}`);
+      }
+    });
   });
 });
