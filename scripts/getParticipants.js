@@ -1,4 +1,5 @@
 require('dotenv').config();
+const objectsToCsv = require('objects-to-csv');
 
 const gameMinter = require('../build/contracts/GameMinter.json');
 
@@ -9,15 +10,16 @@ const minter = new web3.eth.Contract(gameMinter.abi, process.env.GAME_MINTER);
 
 execute();
 
-//WIP!
 async function execute() {
-  for (let i = 0; i < 1000; i++) {
-    // const participant = await gameMinter.getParticipantById(i);
-    // console.log(`nft id: ${participant[0]}`);
-    const res = await minter.methods.getParticipantsCount().call();
-    console.log(res);
-    console.log(i);
+  let results = [];
+  const count = await minter.methods.getParticipantsCount().call();
+  console.log(`INFO: total game participants: ${count}`)
+  for (let i = 0; i < count; i++) {
+    const participant = await minter.methods.getParticipantById(i).call();
+    results.push({id: participant[0], address: participant[3], x: participant[1], y: participant[2]})
   }
+  const csv = new objectsToCsv(results);
+  await csv.toDisk(`./scripts/csv/${process.env.GAME_MINTER}_participants.csv`);
 }
 
 

@@ -9,7 +9,8 @@
     "ganache": "ganache-cli --gasLimit 100000000",
     "ropstenDeploy": "node_modules/.bin/truffle deploy --network ropsten --reset",
     "kovanDeploy": "node_modules/.bin/truffle deploy --network kovan --reset",
-    "mainnetDeploy": "node_modules/.bin/truffle deploy --network mainnet --reset"
+    "mainnetDeploy": "node_modules/.bin/truffle deploy --network mainnet --reset",
+    "generateCsv": "node ./scripts/getParticipants.js"
   },
   "repository": {
     "type": "git",
@@ -35,6 +36,7 @@
     "@truffle/hdwallet-provider": "1.1.0",
     "dotenv": "8.2.0",
     "delay": "4.4.0",
-    "web3": "1.3.0"
+    "web3": "1.3.0",
+    "objects-to-csv": "1.3.6"
   }
 }
