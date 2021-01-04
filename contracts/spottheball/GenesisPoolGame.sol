@@ -8,7 +8,9 @@ import "../TokenWrapper.sol";
 
 
 contract GenesisPoolGame is TokenWrapper, Ownable {
-    uint256 public constant MAX_STAKE = 2020000000000000000;
+
+    uint256 public constant MAX_STAKE = 65 * 1e18;
+    uint256 public constant MAX_ALLOWED_FEE = 1e18;
     ERC1155Minter public gameMinter;
     address public nftFund;
     uint256 public fee;
@@ -41,12 +43,13 @@ contract GenesisPoolGame is TokenWrapper, Ownable {
         fee = _initialFee;
     }
 
-    function changeFee(uint256 _fee) public onlyOwner {
+    function setFee(uint256 _fee) public onlyOwner {
+        require(_fee <= MAX_ALLOWED_FEE, "Max fee is 1 HCORE");
         fee = _fee;
         emit FeeUpdated(_fee);
     }
 
-    function changeNftFund(address _nftFund) public onlyOwner {
+    function setNftFund(address _nftFund) public onlyOwner {
         require(_nftFund != address(0), "Zero address not allowed");
 
         nftFund = _nftFund;
@@ -64,16 +67,14 @@ contract GenesisPoolGame is TokenWrapper, Ownable {
         emit GameStarted(_gameStartTime, _amount);
     }
 
-    // 1. Work on 65 tokens max.
-    // 2. 1 point for 65 tokens, 2 points needed to play.
     function earned(address account) public view returns (uint256) {
         uint256 blockTime = block.timestamp;
         return
             points[account].add(
                 (blockTime.sub(lastUpdateTime[account]).mul(1e18).div(86400).mul(
                     (balanceOf(account).mul(10000)).div(1e18)
-                //1 point equals 2.02 tokens per day
-                )).div(20200)
+                //1 point equals 65 tokens per day
+                )).div(650000)
             );
     }
 
@@ -85,10 +86,10 @@ contract GenesisPoolGame is TokenWrapper, Ownable {
     // UI should show to user amount that will be staked minus fee
     function stake(uint256 amount) public updateReward(msg.sender) {
         require(gameStartTime != 0,  "Not started yet");
-        require(amount <= fee, "Cannot stake less than fee");
+        require(amount >= fee, "Cannot stake less than fee");
 
         uint256 resultAmount = amount - fee;
-        require(resultAmount.add(balanceOf(msg.sender)) <= MAX_STAKE, "Cannot stake more than 2.02 HCORE");
+        require(resultAmount.add(balanceOf(msg.sender)) <= MAX_STAKE, "Cannot stake more than 65 HCORE");
 
         super.stake(resultAmount);
         emit Staked(msg.sender, resultAmount);
@@ -122,20 +123,3 @@ contract GenesisPoolGame is TokenWrapper, Ownable {
         return id;
     }
 }
-
-
-	// function earned(address account) public view returns (uint256) {
-	// 	uint256 blockTime = block.timestamp;
-	// 	return
-	// 		points[account].add(
-	// 			blockTime.sub(lastUpdateTime[account]).mul(1e18).div(86400).mul(balanceOf(account).div(1e8))
-	// 		);
-	// }
-
-	// // stake visibility is public as overriding MemeTokenWrapper's stake() function
-	// function stake(uint256 amount) public updateReward(msg.sender) {
-	// 	require(amount.add(balanceOf(msg.sender)) <= 500000000, "Cannot stake more than 5 meme");
-
-	// 	super.stake(amount);
-	// 	emit Staked(msg.sender, amount);
-	// }

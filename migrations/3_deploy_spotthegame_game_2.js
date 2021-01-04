@@ -2,13 +2,23 @@ require('dotenv').config();
 const delay = require('delay');
 
 const GameMinter = artifacts.require('GameMinter');
-const LPGenesisPoolGame = artifacts.require('LPGenesisPoolGame');
+const GenesisPoolGame = artifacts.require('GenesisPoolGame');
 
-if (!process.env.LP_ERC_20) {
-  throw new Error('LP_ERC_20 is not set in .env file');
+if (!process.env.ERC_20) {
+  throw new Error('ERC_20 is not set in .env file');
 }
 
-const lpERC20Address = process.env.LP_ERC_20;
+if (!process.env.NFT_FUND) {
+  throw new Error('NFT_FUND is not set in .env file');
+}
+
+if (!process.env.FEE_IN_WEI) {
+  throw new Error('FEE_IN_WEI is not set in .env file');
+}
+
+const ERC20Address = process.env.ERC_20;
+const nftFundAddress = process.env.NFT_FUND;
+const feeWei = process.env.FEE_IN_WEI;
 const nextOwner = process.env.NEXT_OWNER;
 
 const wait = async (param) => {console.log(`Mined: ${param}`); await delay(5000);};
@@ -26,18 +36,18 @@ module.exports = async function (deployer, network) {
   await gameMinter.init("Spottheball game minter", "HARDCORE");
   await wait('minter contract inited');
 
-  await deployer.deploy(LPGenesisPoolGame, gameMinter.address, lpERC20Address);
-  const lpGenesisPool = await LPGenesisPoolGame.deployed();
-  await wait(`LP genesis pool contract contract mined ${lpGenesisPool.address}`);
+  await deployer.deploy(GenesisPoolGame, gameMinter.address, ERC20Address, nftFundAddress, feeWei);
+  const genesisPool = await GenesisPoolGame.deployed();
+  await wait(`genesis pool contract contract mined ${genesisPool.address}`);
 
-  await gameMinter.addMinter(lpGenesisPool.address);
+  await gameMinter.addMinter(genesisPool.address);
 
   await wait('minter added');
 
   if (nextOwner) {
     await gameMinter.addWhitelistAdmin(nextOwner);
 
-    await lpGenesisPool.transferOwnership(nextOwner);
+    await genesisPool.transferOwnership(nextOwner);
 
     await gameMinter.transferOwnership(nextOwner);
 

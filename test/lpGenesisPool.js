@@ -5,7 +5,7 @@ const LPGenesisPoolGame = artifacts.require('LPGenesisPoolGame');
 
 const truffleAssert = require('truffle-assertions');
 
-contract('GameMinter', function(accounts) {
+contract('LPGenesisPoolGame', function(accounts) {
   const ganache = new Ganache(web3);
   afterEach('revert', ganache.revert);
 
@@ -336,6 +336,8 @@ contract('GameMinter', function(accounts) {
 
       assertBNequal(await lpGenesisPool.balanceOf(user), 0);
       assertBNequal(await lpGenesisPool.totalSupply(), 0);
+
+      await ganache.setTime(stakeTimeAfterTwoDays);
 
       const res = await lpGenesisPool.earned.call(user, {from: user});
       const twoPoints = bn(onePoint).mul(bn(2));
