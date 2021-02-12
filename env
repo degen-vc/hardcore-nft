@@ -3,3 +3,7 @@ INFURA_API_KEY='placeholder'
 PRIVATE_KEY='placeholder'
 NEXT_OWNER='placeholder'
 LP_ERC_20='placeholder'
+
+ERC_20='placeholder'
+NFT_FUND='placeholder'
+FEE_IN_WEI='100000000000000000'

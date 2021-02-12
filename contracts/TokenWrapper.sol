@@ -4,7 +4,7 @@ import "./IERC20.sol";
 import "./SafeMath.sol";
 
 
-contract LPTokenWrapper {
+contract TokenWrapper {
     using SafeMath for uint256;
     IERC20 public token;
 

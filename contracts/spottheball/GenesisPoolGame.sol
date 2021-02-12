@@ -7,9 +7,13 @@ import "../IERC20.sol";
 import "../TokenWrapper.sol";
 
 
-contract LPGenesisPoolGame is TokenWrapper, Ownable {
-    uint256 public constant MAX_STAKE = 2020000000000000000;
+contract GenesisPoolGame is TokenWrapper, Ownable {
+
+    uint256 public constant MAX_STAKE = 65 * 1e18;
+    uint256 public constant MAX_ALLOWED_FEE = 1e18;
     ERC1155Minter public gameMinter;
+    address public nftFund;
+    uint256 public fee;
 
     uint256 public gameStartTime;
     uint256 public rewardNeeded;
@@ -19,6 +23,8 @@ contract LPGenesisPoolGame is TokenWrapper, Ownable {
     mapping(address => uint256) public points;
 
     event GameStarted(uint256 gameStartTime, uint256 rewardNeeded);
+    event FeeUpdated(uint256 fee);
+    event FundUpdated(address nftFund);
     event Staked(address indexed user, uint256 amount);
     event Withdrawn(address indexed user, uint256 amount);
     event Created(address indexed user, uint256 indexed id, uint256 x, uint256 y);
@@ -31,8 +37,23 @@ contract LPGenesisPoolGame is TokenWrapper, Ownable {
         _;
     }
 
-    constructor(ERC1155Minter _gameMinter, IERC20 _erc20Address) public TokenWrapper(_erc20Address) {
+    constructor(ERC1155Minter _gameMinter, IERC20 _erc20Address, address _nftFund, uint256 _initialFee) public TokenWrapper(_erc20Address) {
         gameMinter = _gameMinter;
+        nftFund = _nftFund;
+        fee = _initialFee;
+    }
+
+    function setFee(uint256 _fee) public onlyOwner {
+        require(_fee <= MAX_ALLOWED_FEE, "Max fee is 1 HCORE");
+        fee = _fee;
+        emit FeeUpdated(_fee);
+    }
+
+    function setNftFund(address _nftFund) public onlyOwner {
+        require(_nftFund != address(0), "Zero address not allowed");
+
+        nftFund = _nftFund;
+        emit FundUpdated(_nftFund);
     }
 
     function start(uint256 _gameStartTime, uint256 _amount, uint256 _imageWidth, string memory _url) public onlyOwner {
@@ -52,18 +73,27 @@ contract LPGenesisPoolGame is TokenWrapper, Ownable {
             points[account].add(
                 (blockTime.sub(lastUpdateTime[account]).mul(1e18).div(86400).mul(
                     (balanceOf(account).mul(10000)).div(1e18)
-                //1 point equals 2.02 LP tokens per day
-                )).div(20200)
+                //1 point equals 65 tokens per day
+                )).div(650000)
             );
     }
 
+    function _sendFee() private {
+        token.transferFrom(msg.sender, nftFund, fee);
+    }
+
     // stake visibility is public as overriding TokenWrapper's stake() function
+    // UI should show to user amount that will be staked minus fee
     function stake(uint256 amount) public updateReward(msg.sender) {
         require(gameStartTime != 0,  "Not started yet");
-        require(amount.add(balanceOf(msg.sender)) <= MAX_STAKE, "Cannot stake more than 2.02 UNI-V2 LP");
+        require(amount >= fee, "Cannot stake less than fee");
 
-        super.stake(amount);
-        emit Staked(msg.sender, amount);
+        uint256 resultAmount = amount - fee;
+        require(resultAmount.add(balanceOf(msg.sender)) <= MAX_STAKE, "Cannot stake more than 65 HCORE");
+
+        super.stake(resultAmount);
+        emit Staked(msg.sender, resultAmount);
+        _sendFee();
     }
 
     function withdraw(uint256 amount) public updateReward(msg.sender) {
