@@ -48,6 +48,20 @@ module.exports = {
       gas: 3000000,
       skipDryRun: true,
     },
+    mumbai: { // truffle deploy --network mumbai --reset
+      provider: () => new HDWalletProvider(process.env.PRIVATE_KEY, 'https://rpc-mumbai.matic.today'),
+      network_id: 80001,
+      gasPrice: gasPrice,
+      gas: 3000000,
+      skipDryRun: true,
+    },
+    matic: { // truffle deploy --network matic --reset
+      provider: () => new HDWalletProvider(process.env.PRIVATE_KEY, 'https://rpc-mainnet.matic.network'),
+      network_id: 137,
+      gasPrice: gasPrice,
+      gas: 3000000,
+      skipDryRun: true,
+    },
   },
   compilers: {
     solc: {

@@ -10,9 +10,13 @@
     "ropstenDeploy": "node_modules/.bin/truffle deploy --network ropsten --reset --to 2",
     "kovanDeploy": "node_modules/.bin/truffle deploy --network kovan --reset --to 2",
     "mainnetDeploy": "node_modules/.bin/truffle deploy --network mainnet --reset --to 2",
+    "mumbaiDeploy": "node_modules/.bin/truffle deploy --network mumbai --reset --to 2",
+    "maticDeploy": "node_modules/.bin/truffle deploy --network matic --reset --to 2",
     "ropstenDeploy_2": "node_modules/.bin/truffle deploy --network ropsten --reset --f 3",
     "kovanDeploy_2": "node_modules/.bin/truffle deploy --network kovan --reset --f 3",
     "mainnetDeploy_2": "node_modules/.bin/truffle deploy --network mainnet --reset --f 3",
+    "mumbaiDeploy_2": "node_modules/.bin/truffle deploy --network mumbai --reset --to 3",
+    "maticDeploy_2": "node_modules/.bin/truffle deploy --network matic --reset --to 3",
     "generateCsv": "node ./scripts/getParticipants.js"
   },
   "repository": {
