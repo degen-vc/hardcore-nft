@@ -9,7 +9,7 @@ contract GameMinter is ERC1155Minter {
     return baseMetadataURI;
   }
 
-  function uri(uint256) public view returns (string memory) {
-    return baseMetadataURI;
+  function uri(uint256 _id) public view returns (string memory) {
+    return string(abi.encodePacked(baseMetadataURI, _uint2str(_id)));
   }
 }
