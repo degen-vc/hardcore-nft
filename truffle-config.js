@@ -56,10 +56,10 @@ module.exports = {
       skipDryRun: true,
     },
     matic: { // truffle deploy --network matic --reset
-      provider: () => new HDWalletProvider(process.env.PRIVATE_KEY, 'https://rpc-mainnet.matic.network'),
+      provider: () => new HDWalletProvider(process.env.PRIVATE_KEY, 'https://rpc-mainnet.maticvigil.com'),
       network_id: 137,
       gasPrice: gasPrice,
-      gas: 3000000,
+      gas: 6000000,
       skipDryRun: true,
     },
   },
@@ -74,4 +74,12 @@ module.exports = {
       },
     },
   },
+
+  plugins: [
+    'truffle-plugin-verify'
+  ],
+
+  api_keys: {
+    polygonscan: process.env.POLYGONSCAN_API_KEY
+  }
 };
