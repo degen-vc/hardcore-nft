@@ -34,8 +34,13 @@ contract('GameMinter', function(accounts) {
     });
 
     it('should return valid URL and URL id', async () => {
-      assert.equal(await gameMinter.uri(), defaultUri);
-      assert.equal(await gameMinter.uri(1), defaultUri);
+      assert.equal(await gameMinter.getBaseMetadataURI(), defaultUri);
+    });
+
+    it('should return valid link with URL and URL id', async () => {
+      const id = '7163197404758946086913';
+    
+      assert.equal(await gameMinter.uri(id), defaultUri + id);
     });
 
   });
@@ -125,29 +130,25 @@ contract('GameMinter', function(accounts) {
     it('should be possible to add setBaseMetadataURI for whitelist admin', async () => {
       const newUri = 'new_uri';
 
-      assert.equal(await gameMinter.uri(), defaultUri);
-      assert.equal(await gameMinter.uri(1), defaultUri);
+      assert.equal(await gameMinter.getBaseMetadataURI(), defaultUri);
 
       await gameMinter.setBaseMetadataURI(newUri);
 
-      assert.equal(await gameMinter.uri(), newUri);
-      assert.equal(await gameMinter.uri(1), newUri);
+      assert.equal(await gameMinter.getBaseMetadataURI(), newUri);
     });
 
     it('should NOT be possible to add setBaseMetadataURI for NOT whitelist admin', async () => {
       const newUri = 'new_uri';
       const notAdmin = accounts[2];
 
-      assert.equal(await gameMinter.uri(), defaultUri);
-      assert.equal(await gameMinter.uri(1), defaultUri);
+      assert.equal(await gameMinter.getBaseMetadataURI(), defaultUri);
 
       await truffleAssert.reverts(
         gameMinter.setBaseMetadataURI(newUri, {from: notAdmin}),
         'WhitelistAdminRole: caller does not have the WhitelistAdmin role',
       );
 
-      assert.equal(await gameMinter.uri(), defaultUri);
-      assert.equal(await gameMinter.uri(1), defaultUri);
+      assert.equal(await gameMinter.getBaseMetadataURI(), defaultUri);
     });
 
   });
@@ -252,9 +253,7 @@ contract('GameMinter', function(accounts) {
 
     });
     
-
   });
-
 
 });
 
