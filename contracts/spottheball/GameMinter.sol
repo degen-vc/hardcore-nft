@@ -5,7 +5,7 @@ import "./ERC1155Minter.sol";
 
 contract GameMinter is ERC1155Minter {
 
-  function uri() public view returns (string memory) {
+  function getBaseMetadataURI() public view returns (string memory) {
     return baseMetadataURI;
   }
 
